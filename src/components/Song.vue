@@ -1,6 +1,10 @@
 <template>
-  <div
+  <div 
+  class="song-container"
   @click="playSong">
+  <img 
+  class="artwork-image"
+  :src="track.artwork_url.replace('large','t500x500')">
       <h3>{{track.title}}</h3>
       <h4>{{track.id}}</h4>
   </div>
@@ -19,12 +23,26 @@ export default {
         })
         .then(
           function() {
-            this.$store.state.player = myPlayer;
+            this.$store.dispatch("loadPlayer",myPlayer);
+            this.$store.dispatch("loadSong", this.track.title)
+            this.$store.dispatch("isPlaying", true)
             this.$store.state.player.play();
-            this.$store.state.currentSong = this.track.title
           }.bind(this)
         );
     }
   }
 };
 </script>
+
+<style lang="scss">
+@import "../Sass_variables/variables";
+
+.song-container{
+  border: 1px solid $color-grey-light;
+}
+
+.artwork-image{
+  height: 180px;
+  width: 180px;
+}
+</style>

@@ -1,21 +1,42 @@
-import Vue from "vue"
-import Vuex from "vuex"
+import Vue from "vue";
+import Vuex from "vuex";
 
 Vue.use(Vuex);
 
- export const store = new Vuex.Store({
-    state:{
-       player: "",
-       tracks:[],
-       currentSong: ""
+export const store = new Vuex.Store({
+  state: {
+    player: "",
+    tracks: [],
+    currentSong: "",
+    isPlaying: false
+  },
+  getters: {},
+  mutations: {
+    loadTracks(state, payload) {
+      state.tracks = payload;
     },
-    getters:{
-
+    loadPlayer(state, payload) {
+      state.player = payload;
     },
-    mutations:{
-
+    loadSong(state, payload) {
+      state.currentSong = payload;
     },
-    actions:{
-
+    isPlaying(state, payload) {
+      state.isPlaying = payload;
     }
+  },
+  actions: {
+    loadTracks(context, payload) {
+      context.commit("loadTracks", payload);
+    },
+    loadPlayer(context, payload) {
+      context.commit("loadPlayer", payload);
+    },
+    loadSong(context, payload) {
+      context.commit("loadSong", payload);
+    },
+    isPlaying(context, payload) {
+      context.commit("isPlaying", payload);
+    }
+  }
 });
