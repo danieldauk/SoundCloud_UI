@@ -44,7 +44,6 @@ export default {
         for (var i = 0; i < 10; i++) {
           tracksArray.push(playlist.tracks[i]);
         }
-        console.log(tracksArray);
         this.$store.dispatch("loadTracks", tracksArray);
       }.bind(this)
     );
