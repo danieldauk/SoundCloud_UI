@@ -8,7 +8,9 @@ export const store = new Vuex.Store({
     player: "",
     tracks: [],
     currentSong: "",
-    isPlaying: false
+    isPlaying: false,
+    currentSongTime: 0,
+    intervalVariable: ""
   },
   getters: {},
   mutations: {
@@ -23,6 +25,12 @@ export const store = new Vuex.Store({
     },
     isPlaying(state, payload) {
       state.isPlaying = payload;
+    },
+    setCurrentSongTime(state, payload) {
+      state.currentSongTime = payload;
+    },
+    setInterval(state, payload) {
+      state.intervalVariable = payload;
     }
   },
   actions: {
@@ -37,6 +45,12 @@ export const store = new Vuex.Store({
     },
     isPlaying(context, payload) {
       context.commit("isPlaying", payload);
+    },
+    setCurrentSongTime(context, payload) {
+      context.commit("setCurrentSongTime", payload);
+    },
+    setInterval(context, payload) {
+      context.commit("setInterval", payload);
     }
   }
 });
