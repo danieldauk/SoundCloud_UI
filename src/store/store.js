@@ -10,7 +10,9 @@ export const store = new Vuex.Store({
     currentSong: "",
     isPlaying: false,
     currentSongTime: 0,
-    intervalVariable: ""
+    currentTrackDuration: 0,
+    intervalVariable: "",
+    currentWave: ""
   },
   getters: {},
   mutations: {
@@ -31,6 +33,12 @@ export const store = new Vuex.Store({
     },
     setInterval(state, payload) {
       state.intervalVariable = payload;
+    },
+    setCurrentWave(state, payload){
+        state.currentWave = payload;
+    },
+    setCurrentTrackDuration(state, payload){
+        state.currentTrackDuration = payload;
     }
   },
   actions: {
@@ -51,6 +59,12 @@ export const store = new Vuex.Store({
     },
     setInterval(context, payload) {
       context.commit("setInterval", payload);
+    },
+    setCurrentWave(context, payload){
+        context.commit("setCurrentWave", payload);
+    },
+    setCurrentTrackDuration(context, payload){
+        context.commit("setCurrentTrackDuration", payload);
     }
   }
 });

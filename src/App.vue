@@ -1,7 +1,9 @@
 <template>
 <div>
   <app-songs></app-songs>
+
   <app-player></app-player>
+
 </div>
 </template>
 
@@ -25,4 +27,5 @@ export default {
     padding: 0;
     margin: 0;
   }
+
 </style>
