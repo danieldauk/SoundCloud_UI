@@ -74,11 +74,17 @@ export default {
         return false;
       }
     },
+    // if songPercentage == 100%?
+    //clear interval after 100%
     songPercentage() {
       if (this.$store.state.currentSong === this.track.title) {
-        return (
-          this.$store.state.currentSongTime / this.track.duration * 100 + "%"
-        );
+        if(this.$store.state.currentSongTime +200 < this.track.duration){
+          return this.$store.state.currentSongTime / this.track.duration * 100 + "%";
+        } else {
+          clearInterval(this.$store.state.intervalVariable);
+          this.$store.dispatch("isPlaying", false);
+            console.log("song finished");
+        }  
       } else {
         return 0 + "%";
       }
@@ -137,11 +143,6 @@ export default {
               );
               this.$store.dispatch("setCurrentWave", this.track.waveform_url);
               this.$store.state.player.play();
-
-              /* when song finishes continue playing */
-
-
-
               this.currentSongTime();
             }.bind(this)
           );
