@@ -12,12 +12,13 @@ export const store = new Vuex.Store({
     currentSongTime: 0,
     currentTrackDuration: 0,
     intervalVariable: "",
-    currentWave: ""
+    currentWave: "",
+    currentPlaylist: {}
   },
   getters: {},
   mutations: {
     loadTracks(state, payload) {
-      state.tracks = payload;
+      state.tracks = payload.array;
     },
     loadPlayer(state, payload) {
       state.player = payload;

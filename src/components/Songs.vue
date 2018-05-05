@@ -1,8 +1,6 @@
 <template>
 <div class="songs-container">
-   <button
-   @click="shuffleSongs"
-   >Shuffle</button>
+
    <transition-group
    tag="div"
    class="transition-container"
@@ -18,33 +16,33 @@
 
 <script>
 import Song from "./Song.vue";
-import _ from "lodash";
+
 
 export default {
   computed: {
     tracks() {
+     // console.log(this.$store.state.currentPlaylist);
       return this.$store.state.tracks;
     },
     currentSong() {
       return this.$store.state.currentSong;
     }
   },
-  methods: {
-    shuffleSongs() {
-      var tracksArray = this.$store.state.tracks;
-      tracksArray = _.shuffle(tracksArray);
-      this.$store.dispatch("loadTracks", tracksArray);
-    }
-  },
+  
 
   created() {
     SC.get("playlists/89657406").then(
       function(playlist) {
         var tracksArray = [];
-        for (var i = 0; i < 10; i++) {
+        var currentPlaylist = {};
+        var payload = {};
+        for (var i = 0; i < 8; i++) {
           tracksArray.push(playlist.tracks[i]);
+          currentPlaylist[playlist.tracks[i].title] = i;
         }
-        this.$store.dispatch("loadTracks", tracksArray);
+        payload.array = tracksArray;
+        payload.playlist = currentPlaylist;
+        this.$store.dispatch("loadTracks", payload);
       }.bind(this)
     );
   },
@@ -59,13 +57,17 @@ export default {
 
 .transition-container {
   min-height: calc(100vh - 50px);
-  background-color: $color-grey-medium;
   display: grid;
   grid-gap: 20px;
   justify-content: center;
   grid-template-columns: repeat(4, 200px);
 }
 
+.songs-container{
+    padding-bottom: 60px;
+    padding-top: 10px;
+    background-color: $color-grey-medium;
+}
 .tracks-move{
     transition: 1s;
 }
