@@ -13,12 +13,15 @@ export const store = new Vuex.Store({
     currentTrackDuration: 0,
     intervalVariable: "",
     currentWave: "",
-    currentPlaylist: {}
+    currentPlaylist: {},
+    repeatOn: true,
+    volume: 0.5
   },
   getters: {},
   mutations: {
     loadTracks(state, payload) {
       state.tracks = payload.array;
+      state.currentPlaylist = payload.playlist;
     },
     loadPlayer(state, payload) {
       state.player = payload;
@@ -40,6 +43,12 @@ export const store = new Vuex.Store({
     },
     setCurrentTrackDuration(state, payload){
         state.currentTrackDuration = payload;
+    },
+    setRepeat(state, payload){
+      state.repeatOn = payload;
+    },
+    setVolume(state, payload){
+      state.volume = payload;
     }
   },
   actions: {
@@ -66,6 +75,12 @@ export const store = new Vuex.Store({
     },
     setCurrentTrackDuration(context, payload){
         context.commit("setCurrentTrackDuration", payload);
+    },
+    setRepeat(context, payload){
+      context.commit("setRepeat", payload);
+    },
+    setVolume(context, payload){
+      context.commit("setVolume", payload);
     }
   }
 });

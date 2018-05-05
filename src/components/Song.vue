@@ -74,17 +74,10 @@ export default {
         return false;
       }
     },
-    // if songPercentage == 100%?
-    //clear interval after 100%
+
     songPercentage() {
       if (this.$store.state.currentSong === this.track.title) {
-        if(this.$store.state.currentSongTime +200 < this.track.duration){
           return this.$store.state.currentSongTime / this.track.duration * 100 + "%";
-        } else {
-          clearInterval(this.$store.state.intervalVariable);
-          this.$store.dispatch("isPlaying", false);
-            console.log("song finished");
-        }  
       } else {
         return 0 + "%";
       }
@@ -160,6 +153,9 @@ export default {
   display: grid;
   grid-template-rows: 200px 20px auto 30px;
   grid-gap: 5px;
+  position: relative;
+  //z-index is needed because of shuffle effect and z-index of waveform
+  z-index: 4;
 }
 
 .artwork-image {
@@ -185,6 +181,7 @@ export default {
   width:100%;
   position:absolute;
   height:20px;
+  z-index: 1;
 }
 .waveform {
   width: 200px;
@@ -192,7 +189,7 @@ export default {
   filter: brightness(14.5%);
   display: block;
   position:relative;
-  z-index: 3;
+  z-index:3;
 }
 
 .title-container p {
