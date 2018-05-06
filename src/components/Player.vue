@@ -53,17 +53,23 @@
               <use xlink:href="../src/svg/sprite.svg#icon-cycle"/>
             </svg>
         </div>
-        <div class="player-track-info">info</div>
+        <div class="track-name-container">
+
         <div class="player-track">
-            <div 
-            :style="{width:songPercentage}"
-            class="player-track-fill"></div>
-            <div 
-            class="player-track-fill-2"></div>
-            <img 
-            @click="setSongPosition"
-            id="player-track-wave"
-            :src="this.$store.state.currentWave" >
+              <div 
+              :style="{width:songPercentage}"
+              class="player-track-fill"></div>
+              <div 
+              class="player-track-fill-2"></div>
+              <img 
+              @click="setSongPosition"
+              id="player-track-wave"
+              :src="this.$store.state.currentWave" >
+            </div>
+            <div class="player-track-info">{{$store.state.currentSong}}</div>
+        </div>
+        <div class="player-time">
+          {{songTime}}
         </div>
         <div
         class="player-volume"
@@ -110,6 +116,17 @@ export default {
       } else {
         return "song finished";
       }
+    },
+    songTime(){
+      var currentTimeSeconds = Math.round(this.$store.state.currentSongTime/1000);
+      var totalTimeSeconds =  Math.round(this.$store.state.currentTrackDuration/1000);
+      var currentTimeMinutes =currentTimeSeconds/60;
+      var currentResidualMinutes = Math.round(currentTimeMinutes%1*60)<10? "0"+Math.round(currentTimeMinutes%1*60): Math.round(currentTimeMinutes%1*60);
+      var currentTimeMinutesAndSeconds = Math.floor(currentTimeMinutes) +":"+ currentResidualMinutes;
+      var totalTimeMinutes =totalTimeSeconds/60;
+      var totalResidualMinutes = Math.round(totalTimeMinutes%1*60)<10? "0"+Math.round(totalTimeMinutes%1*60): Math.round(totalTimeMinutes%1*60);
+      var totalTimeMinutesAndSeconds = Math.floor(totalTimeMinutes) +":"+ totalResidualMinutes;
+      return currentTimeMinutesAndSeconds + "/" + totalTimeMinutesAndSeconds;
     },
     isPlaying() {
       return this.$store.state.isPlaying;
@@ -311,14 +328,32 @@ $knob-shadow: 1px 1px rgba(0, 0, 0, 0.2);
   transform: translateY(50px);
   opacity: 0;
   transition: all 1s;
-  display: flex;
+  display: grid;
+  grid-template-columns: 20% 60% 10% 10%;
   align-items: center;
   z-index: 4;
 }
 
+.track-name-container{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.player-track-info{
+  height: auto;
+  font-size:11px;
+  margin-top: 3px;
+  color: $color-grey-light;
+  display:flex;
+  align-items: center;
+}
+
 .player-track {
   position: relative;
-  width: 50%;
+  width: calc(100% - 40px);
+  margin: 0 20px;
 }
 .player-track-fill {
   height: 20px;
@@ -345,15 +380,14 @@ $knob-shadow: 1px 1px rgba(0, 0, 0, 0.2);
 
 .player-buttons {
   display: flex;
+  box-sizing: border-box;
   align-items: center;
-  justify-content: center;
-  margin: 0 20px;
+  justify-content: space-around;
 }
 .play-pause-container {
   width: 30px;
   display: flex;
   justify-content: center;
-  margin: 0 20px;
 }
 
 .player-control-icon {
@@ -361,7 +395,6 @@ $knob-shadow: 1px 1px rgba(0, 0, 0, 0.2);
   width: 15px;
   fill: $color-grey-light;
   cursor: pointer;
-  margin: 0px 20px;
 
   &-play {
     height: 30px;
@@ -383,6 +416,15 @@ $knob-shadow: 1px 1px rgba(0, 0, 0, 0.2);
 
 .activeRepeat {
   fill: $color-green-light;
+}
+
+.player-time{
+  flex:1;
+  display:flex;
+  justify-content: center;
+  color:$color-grey-light;
+  letter-spacing: 1.5px;
+  font-size: 14px;
 }
 
 .player-volume {

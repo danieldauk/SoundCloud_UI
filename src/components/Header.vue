@@ -1,5 +1,11 @@
 <template>
   <div class="header"> 
+      <div class="soundcloud-logo-container">
+          <svg
+            class="soundcloud-logo">
+              <use xlink:href="../src/svg/sprite.svg#icon-soundcloud"/>
+            </svg>
+      </div>
       <div class="header-search">
         <input
         class="search-input"
@@ -45,13 +51,24 @@ export default {
     background: $color-grey-dark;
     height: 50px;
     display:flex;
-    justify-content: flex-end;
     align-items: center;
     padding: 0 20px;
 }
 
+.soundcloud-logo-container{
+    margin-right: auto;
+    display:flex;
+    align-items: center;
+}
+
 .header-search{
     display:flex;
+}
+
+.soundcloud-logo{
+    fill:$color-grey-light;
+    width: 40px;
+    height:40px;
 }
 
 .search-input{

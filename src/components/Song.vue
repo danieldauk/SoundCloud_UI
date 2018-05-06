@@ -42,6 +42,9 @@
           </svg>
         
       </transition>
+      <div class="song-time">
+        {{songTime}}
+      </div>
       
     </div>
   
@@ -55,6 +58,27 @@ import _ from "lodash";
 export default {
   props: ["track"],
   computed: {
+    songTime(){
+      if(this.$store.state.currentSong === this.track.title){
+    var currentTimeSeconds = Math.round(this.$store.state.currentSongTime/1000);
+          var totalTimeSeconds =  Math.round(this.$store.state.currentTrackDuration/1000);
+          var currentTimeMinutes =currentTimeSeconds/60;
+          var currentResidualMinutes = Math.round(currentTimeMinutes%1*60)<10? "0"+Math.round(currentTimeMinutes%1*60): Math.round(currentTimeMinutes%1*60);
+          var currentTimeMinutesAndSeconds = Math.floor(currentTimeMinutes) +":"+ currentResidualMinutes;
+          var totalTimeMinutes =totalTimeSeconds/60;
+          var totalResidualMinutes = Math.round(totalTimeMinutes%1*60)<10? "0"+Math.round(totalTimeMinutes%1*60): Math.round(totalTimeMinutes%1*60);
+          var totalTimeMinutesAndSeconds = Math.floor(totalTimeMinutes) +":"+ totalResidualMinutes;
+          return currentTimeMinutesAndSeconds + "/" + totalTimeMinutesAndSeconds;
+      } else {
+        var totalTimeSeconds =  Math.round(this.track.duration/1000);
+        var totalTimeMinutes =totalTimeSeconds/60;
+          var totalResidualMinutes = Math.round(totalTimeMinutes%1*60)<10? "0"+Math.round(totalTimeMinutes%1*60): Math.round(totalTimeMinutes%1*60);
+          var totalTimeMinutesAndSeconds = Math.floor(totalTimeMinutes) +":"+ totalResidualMinutes;
+          return "0:00" + "/" + totalTimeMinutesAndSeconds;
+          
+      }
+      
+    },
     showButton() {
       if (
         this.$store.state.isPlaying === false &&
@@ -198,16 +222,23 @@ export default {
   z-index:3;
 }
 
+.title-container{
+  margin: 0 5px;
+  text-align: center;
+}
 .title-container p {
   margin: 0;
+  font-size: 14px;
   color: $color-grey-light;
 
 }
 
 .song-menu-container {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
 }
+
 
 .song-control-icon-play {
   height: 20px;
@@ -221,6 +252,12 @@ export default {
   width: 17px;
   fill: $color-green-light;
   cursor: pointer;
+}
+
+.song-time{
+  color: $color-grey-light;
+  font-size: 14px;
+  letter-spacing: 1.5px;
 }
 
 .song-enter{
