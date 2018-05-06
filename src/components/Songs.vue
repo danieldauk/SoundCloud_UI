@@ -21,22 +21,19 @@ import Song from "./Song.vue";
 export default {
   computed: {
     tracks() {
-     // console.log(this.$store.state.currentPlaylist);
       return this.$store.state.tracks;
-    },
-    currentSong() {
-      return this.$store.state.currentSong;
     }
   },
   
 
   created() {
-    SC.get("playlists/89657406").then(
+    SC.get("playlists/89657406",{limit:8}).then(
       function(playlist) {
+        console.log(playlist);
         var tracksArray = [];
         var currentPlaylist = {};
         var payload = {};
-        for (var i = 0; i < 8; i++) {
+        for (var i = 0; i < playlist.tracks.length; i++) {
           tracksArray.push(playlist.tracks[i]);
           currentPlaylist[playlist.tracks[i].title] = i;
         }

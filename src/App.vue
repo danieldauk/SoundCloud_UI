@@ -1,5 +1,6 @@
 <template>
 <div>
+  <app-header></app-header>
   <app-songs></app-songs>
 
   <app-player></app-player>
@@ -26,6 +27,9 @@ export default {
   body{
     padding: 0;
     margin: 0;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
+
   }
 
 </style>

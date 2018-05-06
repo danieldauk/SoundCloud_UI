@@ -2,7 +2,7 @@
   <div class="song-container">
     <img 
     class="artwork-image"
-    :src="track.artwork_url.replace('large','t500x500')">
+    :src="(track.artwork_url)?track.artwork_url.replace('large','t500x500') : 'https://dummyimage.com/500x500/1e1f1e/282828&text=No Image'">
     <div 
     @click="setSongPosition"
     
@@ -19,7 +19,7 @@
       :src="track.waveform_url">
     </div>
     <div class="title-container">
-      <p>{{track.title}}</p>
+      <p>{{track.title |toSentenceCase}}</p>
     </div>
     <div class="song-menu-container">
       <transition
@@ -51,6 +51,7 @@
 
 
 <script>
+import _ from "lodash";
 export default {
   props: ["track"],
   computed: {
@@ -141,6 +142,11 @@ export default {
           );
       }
     }
+  },
+  filters:{
+    toSentenceCase(value){
+      return value.split(' ').map(_.capitalize).join(' ');
+    }
   }
 };
 </script>
@@ -195,6 +201,7 @@ export default {
 .title-container p {
   margin: 0;
   color: $color-grey-light;
+
 }
 
 .song-menu-container {

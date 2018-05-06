@@ -10,6 +10,7 @@
               <use xlink:href="../src/svg/sprite.svg#icon-shuffle"/>
             </svg>
             <svg
+            @click="playNextPrev(-1)"
             class="player-control-icon player-control-icon-previous">
               <use xlink:href="../src/svg/sprite.svg#icon-controller-jump-to-start"/>
             </svg>
@@ -41,6 +42,7 @@
             
           
             <svg
+            @click="playNextPrev(1)"
             class="player-control-icon player-control-icon-next">
               <use xlink:href="../src/svg/sprite.svg#icon-controller-next"/>
             </svg>
@@ -51,7 +53,7 @@
               <use xlink:href="../src/svg/sprite.svg#icon-cycle"/>
             </svg>
         </div>
-        <div class="player-track-info"></div>
+        <div class="player-track-info">info</div>
         <div class="player-track">
             <div 
             :style="{width:songPercentage}"
@@ -66,25 +68,28 @@
         <div
         class="player-volume"
         >
-          <div 
-          @click="setVolume"
-          id="volume-bar">
-              <div 
-              :style="{width: volume}"
-              class="volume-bar-fill"></div>
-          </div>
-          
 
+          <range-slider
+            class="slider"
+            min="0"
+            max="1"
+            step="0.01"
+            :value="volume"
+            @input="setVolume">
+         </range-slider>
         </div>
     </div>
 </template>
 
 <script>
+import RangeSlider from "vue-range-slider";
+import "vue-range-slider/dist/vue-range-slider.css";
+
 import _ from "lodash";
 export default {
   computed: {
-    volume(){
-      return this.$store.state.volume*100 + "%";
+    volume() {
+      return this.$store.state.volume;
     },
     turnOn() {
       if (this.$store.state.currentWave !== "") {
@@ -103,77 +108,24 @@ export default {
           "%"
         );
       } else {
-        //rewind song to 0 and pause. To play again if play is clicked;
-        this.$store.state.player.pause();
-        this.$store.state.player.seek(0);
-
-        clearInterval(this.$store.state.intervalVariable);
-        this.$store.dispatch("isPlaying", false);
-        /* play next song*/
-
-        //check if end of playlist
-        var currentSong = this.$store.state.currentPlaylist[
-          this.$store.state.currentSong
-        ];
-        if (currentSong === this.$store.state.tracks.length - 1) {
-          if (this.$store.state.repeatOn) {
-            var myPlayer;
-            var nextSong = this.$store.state.tracks[0];
-            SC.stream("/tracks/" + nextSong.id)
-              .then(function(player) {
-                myPlayer = player;
-              })
-              .then(
-                function() {
-                  this.$store.dispatch("loadPlayer", myPlayer);
-                  this.$store.dispatch("loadSong", nextSong.title);
-                  this.$store.dispatch("isPlaying", true);
-                  this.$store.dispatch(
-                    "setCurrentTrackDuration",
-                    nextSong.duration
-                  );
-                  this.$store.dispatch("setCurrentWave", nextSong.waveform_url);
-                  this.$store.state.player.play();
-                  this.currentSongTime();
-                }.bind(this)
-              );
-          }
-        } else {
-          var myPlayer;
-          var nextSong = this.$store.state.tracks[
-            this.$store.state.currentPlaylist[this.$store.state.currentSong] + 1
-          ];
-          SC.stream("/tracks/" + nextSong.id)
-            .then(function(player) {
-              myPlayer = player;
-            })
-            .then(
-              function() {
-                this.$store.dispatch("loadPlayer", myPlayer);
-                this.$store.dispatch("loadSong", nextSong.title);
-                this.$store.dispatch("isPlaying", true);
-                this.$store.dispatch(
-                  "setCurrentTrackDuration",
-                  nextSong.duration
-                );
-                this.$store.dispatch("setCurrentWave", nextSong.waveform_url);
-                this.$store.state.player.play();
-                this.currentSongTime();
-              }.bind(this)
-            );
-        }
+        return "song finished";
       }
     },
     isPlaying() {
       return this.$store.state.isPlaying;
     }
   },
+  watch: {
+    songPercentage: function() {
+      if (this.songPercentage === "song finished") {
+        this.autoPlayNext();
+      }
+    }
+  },
   methods: {
-    setVolume(){
-       var myDiv = document.getElementById("volume-bar").offsetWidth;
-       var position = (event.offsetX / myDiv);
-       this.$store.state.player.setVolume(position);
-       this.$store.dispatch("setVolume", position);
+    setVolume(value) {
+      this.$store.state.player.setVolume(value);
+      this.$store.dispatch("setVolume", value);
     },
     setSongPosition(event) {
       var myDiv = document.getElementById("player-track-wave").offsetWidth;
@@ -223,13 +175,132 @@ export default {
     },
     setRepeat() {
       this.$store.dispatch("setRepeat", !this.$store.state.repeatOn);
+    },
+    autoPlayNext() {
+      //rewind the last song to 0 and pause. To play again if play is clicked ;
+      this.$store.state.player.pause();
+      this.$store.state.player.seek(0);
+
+      clearInterval(this.$store.state.intervalVariable);
+      this.$store.dispatch("isPlaying", false);
+      /* play next song*/
+
+      //check if end of playlist
+      var currentSong = this.$store.state.currentPlaylist[
+        this.$store.state.currentSong
+      ];
+      if (currentSong === this.$store.state.tracks.length - 1) {
+        if (this.$store.state.repeatOn) {
+          var myPlayer;
+          var nextSong = this.$store.state.tracks[0];
+          SC.stream("/tracks/" + nextSong.id)
+            .then(function(player) {
+              myPlayer = player;
+            })
+            .then(
+              function() {
+                this.$store.dispatch("loadPlayer", myPlayer);
+                this.$store.dispatch("loadSong", nextSong.title);
+                this.$store.dispatch("isPlaying", true);
+                this.$store.dispatch(
+                  "setCurrentTrackDuration",
+                  nextSong.duration
+                );
+                this.$store.dispatch("setCurrentWave", nextSong.waveform_url);
+                this.$store.state.player.play();
+                this.currentSongTime();
+              }.bind(this)
+            );
+        }
+      } else {
+        var myPlayer;
+        var nextSong = this.$store.state.tracks[
+          this.$store.state.currentPlaylist[this.$store.state.currentSong] + 1
+        ];
+        SC.stream("/tracks/" + nextSong.id)
+          .then(function(player) {
+            myPlayer = player;
+          })
+          .then(
+            function() {
+              this.$store.dispatch("loadPlayer", myPlayer);
+              this.$store.dispatch("loadSong", nextSong.title);
+              this.$store.dispatch("isPlaying", true);
+              this.$store.dispatch(
+                "setCurrentTrackDuration",
+                nextSong.duration
+              );
+              this.$store.dispatch("setCurrentWave", nextSong.waveform_url);
+              this.$store.state.player.play();
+              this.currentSongTime();
+            }.bind(this)
+          );
+      }
+    },
+    playNextPrev(prevOrNext) {
+      clearInterval(this.$store.state.intervalVariable);
+      this.$store.dispatch("isPlaying", false);
+      /* play next song*/
+
+      //check if end of playlist
+      var currentSong = this.$store.state.currentPlaylist[
+        this.$store.state.currentSong
+      ];
+    
+    if (currentSong === this.$store.state.tracks.length - 1 && prevOrNext === 1) {
+      var nextSong = this.$store.state.tracks[0]
+    }else if (
+        this.$store.state.currentPlaylist[this.$store.state.currentSong] +
+          prevOrNext <
+        0
+      ) {
+        var nextSong = this.$store.state.tracks[
+          this.$store.state.tracks.length - 1
+        ];
+      } else {
+        var nextSong = this.$store.state.tracks[
+          this.$store.state.currentPlaylist[this.$store.state.currentSong] +
+            prevOrNext
+        ];
+      }
+      var myPlayer;
+      SC.stream("/tracks/" + nextSong.id)
+        .then(function(player) {
+          myPlayer = player;
+        })
+        .then(
+          function() {
+            this.$store.dispatch("loadPlayer", myPlayer);
+            this.$store.dispatch("loadSong", nextSong.title);
+            this.$store.dispatch("isPlaying", true);
+            this.$store.dispatch("setCurrentTrackDuration", nextSong.duration);
+            this.$store.dispatch("setCurrentWave", nextSong.waveform_url);
+            this.$store.state.player.play();
+            this.currentSongTime();
+          }.bind(this)
+        );
     }
+  },
+  components: {
+    RangeSlider
   }
 };
 </script>
 
 <style lang="scss">
 @import "../Sass_variables/variables";
+
+$slider-height: 10px;
+$slider-width: 100px;
+$rail-height: 4px;
+$knob-size: 10px;
+$rail-color: $color-grey-medium;
+$rail-fill-color: $color-green-light;
+$knob-color: $color-green-light;
+$knob-border: none;
+$knob-shadow: 1px 1px rgba(0, 0, 0, 0.2);
+@import "~vue-range-slider/dist/vue-range-slider.scss";
+
 .player-container {
   position: fixed;
   height: 50px;
@@ -250,14 +321,14 @@ export default {
   width: 50%;
 }
 .player-track-fill {
-  height: 40px;
+  height: 20px;
   background: $color-green-light;
   position: absolute;
   z-index: 5;
 }
 
 .player-track-fill-2 {
-  height: 40px;
+  height: 20px;
   background: $color-grey-medium;
   position: absolute;
   z-index: 4;
@@ -265,7 +336,7 @@ export default {
 }
 #player-track-wave {
   width: 100%;
-  height: 40px;
+  height: 20px;
   filter: brightness(14.5%);
   display: block;
   position: relative;
@@ -314,27 +385,25 @@ export default {
   fill: $color-green-light;
 }
 
-.player-volume{
-    margin-left: auto;
-    margin-right: 30px;
+.player-volume {
+  margin-left: auto;
+  margin-right: 30px;
 }
 
-
-#volume-bar{
-  height:5px;
+#volume-bar {
+  height: 5px;
   width: 100px;
-  border-radius:10px;
+  border-radius: 10px;
   background: $color-grey-medium;
   position: relative;
-    overflow:hidden;
+  overflow: hidden;
 }
 
-.volume-bar-fill{
-  height:100%;
-  width:20%;
-  position:absolute;
+.volume-bar-fill {
+  height: 100%;
+  width: 20%;
+  position: absolute;
   background: $color-green-light;
-
 }
 
 .song2-enter {
