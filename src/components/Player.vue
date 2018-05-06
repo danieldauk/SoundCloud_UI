@@ -61,10 +61,13 @@
               class="player-track-fill"></div>
               <div 
               class="player-track-fill-2"></div>
-              <img 
+              <div 
               @click="setSongPosition"
-              id="player-track-wave"
-              :src="this.$store.state.currentWave" >
+              :style="{'-webkit-mask-box-image': 'url(' +this.$store.state.currentWave +')'}" 
+              id="player-track-wave">
+              
+              </div>
+              
             </div>
             <div class="player-track-info">{{$store.state.currentSong}}</div>
         </div>
@@ -335,47 +338,47 @@ $knob-shadow: 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 .track-name-container{
+  height:100%;
   display:flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .player-track-info{
   height: auto;
   font-size:11px;
-  margin-top: 3px;
   color: $color-grey-light;
   display:flex;
-  align-items: center;
+  align-items: flex-end;
 }
 
 .player-track {
   position: relative;
   width: calc(100% - 40px);
-  margin: 0 20px;
+  margin: 5px 20px 0;
 }
 .player-track-fill {
-  height: 20px;
+  height: 30px;
   background: $color-green-light;
   position: absolute;
   z-index: 5;
 }
 
 .player-track-fill-2 {
-  height: 20px;
+  height: 30px;
   background: $color-grey-medium;
   position: absolute;
   z-index: 4;
   width: 100%;
 }
+
 #player-track-wave {
-  width: 100%;
-  height: 20px;
-  filter: brightness(14.5%);
-  display: block;
-  position: relative;
-  z-index: 6;
+    background: $color-grey-dark;
+    height:30px;
+    width: 100%;
+    position:absolute;
+    z-index:6;
 }
 
 .player-buttons {

@@ -58,6 +58,7 @@ export default {
   grid-gap: 20px;
   justify-content: center;
   grid-template-columns: repeat(4, 200px);
+  grid-auto-rows: min-content;
 }
 
 .songs-container{

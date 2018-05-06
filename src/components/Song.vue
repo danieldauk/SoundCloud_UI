@@ -14,9 +14,9 @@
       <div
       class="waveform-container-fill-2">
       </div>
-      <img 
-      class="waveform"
-      :src="track.waveform_url">
+      <div 
+      :style="{'-webkit-mask-box-image': 'url(' +track.waveform_url +')'}" 
+      class="waveform"></div>
     </div>
     <div class="title-container">
       <p>{{track.title |toSentenceCase}}</p>
@@ -74,7 +74,7 @@ export default {
         var totalTimeMinutes =totalTimeSeconds/60;
           var totalResidualMinutes = Math.round(totalTimeMinutes%1*60)<10? "0"+Math.round(totalTimeMinutes%1*60): Math.round(totalTimeMinutes%1*60);
           var totalTimeMinutesAndSeconds = Math.floor(totalTimeMinutes) +":"+ totalResidualMinutes;
-          return "0:00" + "/" + totalTimeMinutesAndSeconds;
+          return totalTimeMinutesAndSeconds;
           
       }
       
@@ -181,7 +181,7 @@ export default {
 .song-container {
   background: $color-grey-dark;
   display: grid;
-  grid-template-rows: 200px 20px auto 30px;
+  grid-template-rows: 200px 20px min-content 30px;
   grid-gap: 5px;
   position: relative;
   //z-index is needed because of shuffle effect and z-index of waveform
@@ -216,8 +216,7 @@ export default {
 .waveform {
   width: 200px;
   height: 20px;
-  filter: brightness(14.5%);
-  display: block;
+  background: $color-grey-dark;
   position:relative;
   z-index:3;
 }
@@ -256,8 +255,9 @@ export default {
 
 .song-time{
   color: $color-grey-light;
-  font-size: 14px;
+  font-size: 12px;
   letter-spacing: 1.5px;
+  text-align: center;
 }
 
 .song-enter{
