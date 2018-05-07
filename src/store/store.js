@@ -15,7 +15,11 @@ export const store = new Vuex.Store({
     currentWave: "",
     currentPlaylist: {},
     repeatOn: true,
-    volume: 0.5
+    repeatSong: false,
+    volume: 0.5,
+    currentQueryTerm: "",
+    headerFetching: false
+
   },
   getters: {},
   mutations: {
@@ -49,6 +53,15 @@ export const store = new Vuex.Store({
     },
     setVolume(state, payload){
       state.volume = payload;
+    },
+    setRepeatSong(state, payload){
+      state.repeatSong = payload;
+    },
+    setQueryTerm(state, payload){
+      state.currentQueryTerm = payload;
+    },
+    setHeaderFetching(state, payload){
+      state.headerFetching = payload;
     }
   },
   actions: {
@@ -81,6 +94,15 @@ export const store = new Vuex.Store({
     },
     setVolume(context, payload){
       context.commit("setVolume", payload);
+    },
+    setRepeatSong(context, payload){
+      context.commit("setRepeatSong", payload);
+    },
+    setQueryTerm(context, payload){
+      context.commit("setQueryTerm", payload);
+    },
+    setHeaderFetching(context, payload){
+      context.commit("setHeaderFetching", payload);
     }
   }
 });

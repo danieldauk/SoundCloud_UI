@@ -200,8 +200,10 @@ export default {
       //rewind the last song to 0 and pause. To play again if play is clicked ;
       this.$store.state.player.pause();
       this.$store.state.player.seek(0);
-
-      clearInterval(this.$store.state.intervalVariable);
+      if(this.$store.state.repeatSong){
+        this.$store.state.player.play();
+      } else {
+        clearInterval(this.$store.state.intervalVariable);
       this.$store.dispatch("isPlaying", false);
       /* play next song*/
 
@@ -256,12 +258,16 @@ export default {
             }.bind(this)
           );
       }
+      }
+
+      
     },
     playNextPrev(prevOrNext) {
       clearInterval(this.$store.state.intervalVariable);
       this.$store.dispatch("isPlaying", false);
-      /* play next song*/
-
+      
+      /* turn off repeat song*/
+      this.$store.dispatch("setRepeatSong", false);
       //check if end of playlist
       var currentSong = this.$store.state.currentPlaylist[
         this.$store.state.currentSong
@@ -431,8 +437,7 @@ $knob-shadow: 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 .player-volume {
-  margin-left: auto;
-  margin-right: 30px;
+  margin:0 auto;
 }
 
 #volume-bar {

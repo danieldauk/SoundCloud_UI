@@ -19,31 +19,41 @@
       class="waveform"></div>
     </div>
     <div class="title-container">
-      <p>{{track.title |toSentenceCase}}</p>
+     <p>{{track.title |toSentenceCase |cutTitle}}</p>
     </div>
     <div class="song-menu-container">
-      <transition
-      name="song"
-      >
-          <svg 
-          v-if="showButton"
-          :key="'play'+ track.id"
-          @click="playSong"
-          class="song-control-icon-play">
-            <use xlink:href="../src/svg/sprite.svg#icon-controller-play"/>
-          </svg>
+      <div class="play-pause-song-container">
+          <transition
+            name="song"
+            >
+                <svg 
+                v-if="showButton"
+                :key="'play'+ track.id"
+                @click="playSong"
+                class="song-control-icon-play">
+                  <use xlink:href="../src/svg/sprite.svg#icon-controller-play"/>
+                </svg>
 
-          <svg 
-          :key="'pause'+ track.id"
-          v-if="!showButton"
-          @click="pauseSong"
-          class="song-control-icon-pause">
-            <use xlink:href="../src/svg/sprite.svg#icon-controller-paus"/>
-          </svg>
-        
-      </transition>
+                <svg 
+                :key="'pause'+ track.id"
+                v-if="!showButton"
+                @click="pauseSong"
+                class="song-control-icon-pause">
+                  <use xlink:href="../src/svg/sprite.svg#icon-controller-paus"/>
+                </svg>
+          
+        </transition>
+      </div>
+      
       <div class="song-time">
         {{songTime}}
+      </div>
+      <div class="repeat-song-container">
+          <svg
+          @click="setRepeatSong"
+                :class="[{'song-control-icon-repeat': true},{'song-repeat-on':songRepeat}]">
+                  <use xlink:href="../src/svg/sprite.svg#icon-cycle"/>
+            </svg>
       </div>
       
     </div>
@@ -58,26 +68,50 @@ import _ from "lodash";
 export default {
   props: ["track"],
   computed: {
-    songTime(){
-      if(this.$store.state.currentSong === this.track.title){
-    var currentTimeSeconds = Math.round(this.$store.state.currentSongTime/1000);
-          var totalTimeSeconds =  Math.round(this.$store.state.currentTrackDuration/1000);
-          var currentTimeMinutes =currentTimeSeconds/60;
-          var currentResidualMinutes = Math.round(currentTimeMinutes%1*60)<10? "0"+Math.round(currentTimeMinutes%1*60): Math.round(currentTimeMinutes%1*60);
-          var currentTimeMinutesAndSeconds = Math.floor(currentTimeMinutes) +":"+ currentResidualMinutes;
-          var totalTimeMinutes =totalTimeSeconds/60;
-          var totalResidualMinutes = Math.round(totalTimeMinutes%1*60)<10? "0"+Math.round(totalTimeMinutes%1*60): Math.round(totalTimeMinutes%1*60);
-          var totalTimeMinutesAndSeconds = Math.floor(totalTimeMinutes) +":"+ totalResidualMinutes;
-          return currentTimeMinutesAndSeconds + "/" + totalTimeMinutesAndSeconds;
+    songRepeat() {
+      if (
+        this.$store.state.currentSong == this.track.title &&
+        this.$store.state.repeatSong
+      ) {
+        return true;
       } else {
-        var totalTimeSeconds =  Math.round(this.track.duration/1000);
-        var totalTimeMinutes =totalTimeSeconds/60;
-          var totalResidualMinutes = Math.round(totalTimeMinutes%1*60)<10? "0"+Math.round(totalTimeMinutes%1*60): Math.round(totalTimeMinutes%1*60);
-          var totalTimeMinutesAndSeconds = Math.floor(totalTimeMinutes) +":"+ totalResidualMinutes;
-          return totalTimeMinutesAndSeconds;
-          
+        return false;
       }
-      
+    },
+    songTime() {
+      if (this.$store.state.currentSong === this.track.title) {
+        var currentTimeSeconds = Math.round(
+          this.$store.state.currentSongTime / 1000
+        );
+        var totalTimeSeconds = Math.round(
+          this.$store.state.currentTrackDuration / 1000
+        );
+        var currentTimeMinutes = currentTimeSeconds / 60;
+        var currentResidualMinutes =
+          Math.round((currentTimeMinutes % 1) * 60) < 10
+            ? "0" + Math.round((currentTimeMinutes % 1) * 60)
+            : Math.round((currentTimeMinutes % 1) * 60);
+        var currentTimeMinutesAndSeconds =
+          Math.floor(currentTimeMinutes) + ":" + currentResidualMinutes;
+        var totalTimeMinutes = totalTimeSeconds / 60;
+        var totalResidualMinutes =
+          Math.round((totalTimeMinutes % 1) * 60) < 10
+            ? "0" + Math.round((totalTimeMinutes % 1) * 60)
+            : Math.round((totalTimeMinutes % 1) * 60);
+        var totalTimeMinutesAndSeconds =
+          Math.floor(totalTimeMinutes) + ":" + totalResidualMinutes;
+        return currentTimeMinutesAndSeconds + "/" + totalTimeMinutesAndSeconds;
+      } else {
+        var totalTimeSeconds = Math.round(this.track.duration / 1000);
+        var totalTimeMinutes = totalTimeSeconds / 60;
+        var totalResidualMinutes =
+          Math.round((totalTimeMinutes % 1) * 60) < 10
+            ? "0" + Math.round((totalTimeMinutes % 1) * 60)
+            : Math.round((totalTimeMinutes % 1) * 60);
+        var totalTimeMinutesAndSeconds =
+          Math.floor(totalTimeMinutes) + ":" + totalResidualMinutes;
+        return totalTimeMinutesAndSeconds;
+      }
     },
     showButton() {
       if (
@@ -102,19 +136,26 @@ export default {
 
     songPercentage() {
       if (this.$store.state.currentSong === this.track.title) {
-          return this.$store.state.currentSongTime / this.track.duration * 100 + "%";
+        return (
+          this.$store.state.currentSongTime / this.track.duration * 100 + "%"
+        );
       } else {
         return 0 + "%";
       }
     }
   },
   methods: {
+    setRepeatSong() {
+      if (this.$store.state.currentSong === this.track.title) {
+        this.$store.dispatch("setRepeatSong", !this.$store.state.repeatSong);
+      }
+    },
     setSongPosition(event) {
       if (this.$store.state.currentSong === this.track.title) {
         var myDiv = document.getElementsByClassName("waveform")[0].offsetWidth;
         var position = this.track.duration * (event.offsetX / myDiv);
         this.$store.state.player.seek(position);
-         this.$store.dispatch("setCurrentSongTime",position);
+        this.$store.dispatch("setCurrentSongTime", position);
       }
     },
     currentSongTime() {
@@ -139,7 +180,10 @@ export default {
       clearInterval(this.$store.state.intervalVariable);
     },
     playSong() {
-      if (this.$store.state.currentSong === this.track.title && !this.$store.state.isPlaying) {
+      if (
+        this.$store.state.currentSong === this.track.title &&
+        !this.$store.state.isPlaying
+      ) {
         this.$store.state.player.play();
         this.currentSongTime();
         this.$store.dispatch("isPlaying", true);
@@ -167,9 +211,19 @@ export default {
       }
     }
   },
-  filters:{
-    toSentenceCase(value){
-      return value.split(' ').map(_.capitalize).join(' ');
+  filters: {
+    toSentenceCase(value) {
+      return value
+        .split(" ")
+        .map(_.capitalize)
+        .join(" ");
+    },
+    cutTitle(value){
+      if(value.length>50){
+        return value.split("").splice(0,50).join("") + "...";
+      } else {
+        return value;
+      }
     }
   }
 };
@@ -181,7 +235,7 @@ export default {
 .song-container {
   background: $color-grey-dark;
   display: grid;
-  grid-template-rows: 200px 20px min-content 30px;
+  grid-template-rows: 200px 20px minmax(40px, min-content) 30px;
   grid-gap: 5px;
   position: relative;
   //z-index is needed because of shuffle effect and z-index of waveform
@@ -196,32 +250,32 @@ export default {
 .waveform-container {
   width: 200px;
   cursor: pointer;
-  position:relative;
+  position: relative;
 }
 
-.waveform-container-fill-1{
+.waveform-container-fill-1 {
   background: $color-green-light;
-  position:absolute;
+  position: absolute;
   z-index: 2;
-  height:20px;
+  height: 20px;
 }
 
-.waveform-container-fill-2{
+.waveform-container-fill-2 {
   background: $color-grey-medium;
-  width:100%;
-  position:absolute;
-  height:20px;
+  width: 100%;
+  position: absolute;
+  height: 20px;
   z-index: 1;
 }
 .waveform {
   width: 200px;
   height: 20px;
   background: $color-grey-dark;
-  position:relative;
-  z-index:3;
+  position: relative;
+  z-index: 3;
 }
 
-.title-container{
+.title-container {
   margin: 0 5px;
   text-align: center;
 }
@@ -229,7 +283,6 @@ export default {
   margin: 0;
   font-size: 14px;
   color: $color-grey-light;
-
 }
 
 .song-menu-container {
@@ -237,7 +290,6 @@ export default {
   grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
 }
-
 
 .song-control-icon-play {
   height: 20px;
@@ -253,24 +305,46 @@ export default {
   cursor: pointer;
 }
 
-.song-time{
+.play-pause-song-container {
+  display: flex;
+  align-items: center;
+  margin-left: 3px;
+}
+
+.repeat-song-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-right: 5px;
+}
+
+.song-control-icon-repeat {
+  height: 17px;
+  width: 17px;
+  fill: $color-grey-light;
+  cursor: pointer;
+}
+
+.song-repeat-on {
+  fill: $color-green-light;
+}
+
+.song-time {
   color: $color-grey-light;
   font-size: 12px;
   letter-spacing: 1.5px;
   text-align: center;
 }
 
-.song-enter{
-  opacity:0;
+.song-enter {
+  opacity: 0;
 }
 
-.song-enter-active{
-  transition: .2s;
+.song-enter-active {
+  transition: 0.2s;
 }
 
-.song-leave-active{
-opacity:0;
+.song-leave-active {
+  opacity: 0;
 }
-
-
 </style>
