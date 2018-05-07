@@ -24,7 +24,7 @@ export default {
     searchSong(event) {
       this.$store.dispatch("setHeaderFetching", true);
       //delete current songs array and playlist to prevent animation stacking
-      this.$store.dispatch("loadTracks", {array:[], playlist:{}});
+      this.$store.dispatch("loadTracks", { array: [], playlist: {} });
 
       if (event.target.value === "") {
         SC.get("playlists/89657406", { limit: 8 }).then(
@@ -93,10 +93,6 @@ export default {
   align-items: center;
 }
 
-.header-search {
-  display: flex;
-}
-
 .soundcloud-logo {
   fill: $color-grey-light;
   width: 40px;
@@ -117,9 +113,10 @@ export default {
     font-family: roboto;
   }
 }
-.search-icon {
-  width: 20px;
-  height: 20px;
-  fill: $color-grey-medium;
+
+@media (max-width: 500px) {
+  .search-input {
+    width: 150px;
+  }
 }
 </style>

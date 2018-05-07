@@ -71,9 +71,10 @@
             </div>
             <div class="player-track-info">{{$store.state.currentSong}}</div>
         </div>
-        <div class="player-time">
-          {{songTime}}
-        </div>
+        <div class="time-volume-container">
+          <div class="player-time">
+           {{songTime}}
+          </div>
         <div
         class="player-volume"
         >
@@ -87,6 +88,8 @@
             @input="setVolume">
          </range-slider>
         </div>
+        </div>
+        
     </div>
 </template>
 
@@ -120,15 +123,27 @@ export default {
         return "song finished";
       }
     },
-    songTime(){
-      var currentTimeSeconds = Math.round(this.$store.state.currentSongTime/1000);
-      var totalTimeSeconds =  Math.round(this.$store.state.currentTrackDuration/1000);
-      var currentTimeMinutes =currentTimeSeconds/60;
-      var currentResidualMinutes = Math.round(currentTimeMinutes%1*60)<10? "0"+Math.round(currentTimeMinutes%1*60): Math.round(currentTimeMinutes%1*60);
-      var currentTimeMinutesAndSeconds = Math.floor(currentTimeMinutes) +":"+ currentResidualMinutes;
-      var totalTimeMinutes =totalTimeSeconds/60;
-      var totalResidualMinutes = Math.round(totalTimeMinutes%1*60)<10? "0"+Math.round(totalTimeMinutes%1*60): Math.round(totalTimeMinutes%1*60);
-      var totalTimeMinutesAndSeconds = Math.floor(totalTimeMinutes) +":"+ totalResidualMinutes;
+    songTime() {
+      var currentTimeSeconds = Math.round(
+        this.$store.state.currentSongTime / 1000
+      );
+      var totalTimeSeconds = Math.round(
+        this.$store.state.currentTrackDuration / 1000
+      );
+      var currentTimeMinutes = currentTimeSeconds / 60;
+      var currentResidualMinutes =
+        Math.round((currentTimeMinutes % 1) * 60) < 10
+          ? "0" + Math.round((currentTimeMinutes % 1) * 60)
+          : Math.round((currentTimeMinutes % 1) * 60);
+      var currentTimeMinutesAndSeconds =
+        Math.floor(currentTimeMinutes) + ":" + currentResidualMinutes;
+      var totalTimeMinutes = totalTimeSeconds / 60;
+      var totalResidualMinutes =
+        Math.round((totalTimeMinutes % 1) * 60) < 10
+          ? "0" + Math.round((totalTimeMinutes % 1) * 60)
+          : Math.round((totalTimeMinutes % 1) * 60);
+      var totalTimeMinutesAndSeconds =
+        Math.floor(totalTimeMinutes) + ":" + totalResidualMinutes;
       return currentTimeMinutesAndSeconds + "/" + totalTimeMinutesAndSeconds;
     },
     isPlaying() {
@@ -200,21 +215,45 @@ export default {
       //rewind the last song to 0 and pause. To play again if play is clicked ;
       this.$store.state.player.pause();
       this.$store.state.player.seek(0);
-      if(this.$store.state.repeatSong){
+      if (this.$store.state.repeatSong) {
         this.$store.state.player.play();
       } else {
         clearInterval(this.$store.state.intervalVariable);
-      this.$store.dispatch("isPlaying", false);
-      /* play next song*/
+        this.$store.dispatch("isPlaying", false);
+        /* play next song*/
 
-      //check if end of playlist
-      var currentSong = this.$store.state.currentPlaylist[
-        this.$store.state.currentSong
-      ];
-      if (currentSong === this.$store.state.tracks.length - 1) {
-        if (this.$store.state.repeatOn) {
+        //check if end of playlist
+        var currentSong = this.$store.state.currentPlaylist[
+          this.$store.state.currentSong
+        ];
+        if (currentSong === this.$store.state.tracks.length - 1) {
+          if (this.$store.state.repeatOn) {
+            var myPlayer;
+            var nextSong = this.$store.state.tracks[0];
+            SC.stream("/tracks/" + nextSong.id)
+              .then(function(player) {
+                myPlayer = player;
+              })
+              .then(
+                function() {
+                  this.$store.dispatch("loadPlayer", myPlayer);
+                  this.$store.dispatch("loadSong", nextSong.title);
+                  this.$store.dispatch("isPlaying", true);
+                  this.$store.dispatch(
+                    "setCurrentTrackDuration",
+                    nextSong.duration
+                  );
+                  this.$store.dispatch("setCurrentWave", nextSong.waveform_url);
+                  this.$store.state.player.play();
+                  this.currentSongTime();
+                }.bind(this)
+              );
+          }
+        } else {
           var myPlayer;
-          var nextSong = this.$store.state.tracks[0];
+          var nextSong = this.$store.state.tracks[
+            this.$store.state.currentPlaylist[this.$store.state.currentSong] + 1
+          ];
           SC.stream("/tracks/" + nextSong.id)
             .then(function(player) {
               myPlayer = player;
@@ -234,48 +273,25 @@ export default {
               }.bind(this)
             );
         }
-      } else {
-        var myPlayer;
-        var nextSong = this.$store.state.tracks[
-          this.$store.state.currentPlaylist[this.$store.state.currentSong] + 1
-        ];
-        SC.stream("/tracks/" + nextSong.id)
-          .then(function(player) {
-            myPlayer = player;
-          })
-          .then(
-            function() {
-              this.$store.dispatch("loadPlayer", myPlayer);
-              this.$store.dispatch("loadSong", nextSong.title);
-              this.$store.dispatch("isPlaying", true);
-              this.$store.dispatch(
-                "setCurrentTrackDuration",
-                nextSong.duration
-              );
-              this.$store.dispatch("setCurrentWave", nextSong.waveform_url);
-              this.$store.state.player.play();
-              this.currentSongTime();
-            }.bind(this)
-          );
       }
-      }
-
-      
     },
     playNextPrev(prevOrNext) {
       clearInterval(this.$store.state.intervalVariable);
       this.$store.dispatch("isPlaying", false);
-      
+
       /* turn off repeat song*/
       this.$store.dispatch("setRepeatSong", false);
       //check if end of playlist
       var currentSong = this.$store.state.currentPlaylist[
         this.$store.state.currentSong
       ];
-    
-    if (currentSong === this.$store.state.tracks.length - 1 && prevOrNext === 1) {
-      var nextSong = this.$store.state.tracks[0]
-    }else if (
+
+      if (
+        currentSong === this.$store.state.tracks.length - 1 &&
+        prevOrNext === 1
+      ) {
+        var nextSong = this.$store.state.tracks[0];
+      } else if (
         this.$store.state.currentPlaylist[this.$store.state.currentSong] +
           prevOrNext <
         0
@@ -332,30 +348,30 @@ $knob-shadow: 1px 1px rgba(0, 0, 0, 0.2);
   height: 50px;
   width: 100%;
   background: $color-grey-dark;
-  top: calc(100vh - 50px);
+  bottom: 0;
   left: 0;
   transform: translateY(50px);
   opacity: 0;
   transition: all 1s;
   display: grid;
-  grid-template-columns: 20% 60% 10% 10%;
+  grid-template-columns: 20% 60% 20%;
   align-items: center;
   z-index: 4;
 }
 
-.track-name-container{
-  height:100%;
-  display:flex;
+.track-name-container {
+  height: 100%;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
 }
 
-.player-track-info{
+.player-track-info {
   height: auto;
-  font-size:11px;
+  font-size: 11px;
   color: $color-grey-light;
-  display:flex;
+  display: flex;
   align-items: flex-end;
 }
 
@@ -380,11 +396,11 @@ $knob-shadow: 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 #player-track-wave {
-    background: $color-grey-dark;
-    height:30px;
-    width: 100%;
-    position:absolute;
-    z-index:6;
+  background: $color-grey-dark;
+  height: 30px;
+  width: 100%;
+  position: absolute;
+  z-index: 6;
 }
 
 .player-buttons {
@@ -427,17 +443,19 @@ $knob-shadow: 1px 1px rgba(0, 0, 0, 0.2);
   fill: $color-green-light;
 }
 
-.player-time{
-  flex:1;
-  display:flex;
-  justify-content: center;
-  color:$color-grey-light;
+.time-volume-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.player-time {
+  color: $color-grey-light;
   letter-spacing: 1.5px;
   font-size: 14px;
 }
 
 .player-volume {
-  margin:0 auto;
+  margin: 0 auto;
 }
 
 #volume-bar {
@@ -469,5 +487,30 @@ $knob-shadow: 1px 1px rgba(0, 0, 0, 0.2);
   transform: translateX(-20px) scale(0.5);
   opacity: 0;
   transition: 0.2s;
+}
+
+@media (max-width: 800px) {
+  .player-container {
+    background: $color-grey-dark;
+    bottom: 0;
+    height: 120px;
+    grid-template-columns: auto;
+    grid-row-gap: 5px;
+    grid-template-rows: 30px 50px 25px;
+  }
+  .player-track-info{
+  }
+
+  .time-volume-container {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .player-time {
+  }
+
+  .player-volume {
+    margin: 0;
+  }
 }
 </style>

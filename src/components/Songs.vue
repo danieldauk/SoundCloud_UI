@@ -259,4 +259,38 @@ export default {
 .tracks-move {
   transition: 1s;
 }
+
+@media (max-width: 900px) {
+  .transition-container {
+    grid-template-columns: repeat(3, 200px);
+  }
+  .song-spinner {
+    grid-column: 1/4;
+  }
+}
+
+@media (max-width: 800px) {
+  .songs-container {
+  min-height: calc(100vh - 190px);
+  padding-bottom: 130px;
+  }
+}
+
+@media (max-width: 700px) {
+  .transition-container {
+    grid-template-columns: repeat(2, 200px);
+  }
+  .song-spinner {
+    grid-column: 1/3;
+  }
+}
+
+@media (max-width: 450px) {
+  .transition-container {
+    grid-template-columns: 200px;
+  }
+  .song-spinner {
+    grid-column: 1/2;
+  }
+}
 </style>
