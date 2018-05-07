@@ -31,7 +31,7 @@
                 :key="'play'+ track.id"
                 @click="playSong"
                 class="song-control-icon-play">
-                  <use xlink:href="../src/svg/sprite.svg#icon-controller-play"/>
+                  <use xlink:href="/src/svg/sprite.svg#icon-controller-play"/>
                 </svg>
 
                 <svg 
@@ -39,7 +39,7 @@
                 v-if="!showButton"
                 @click="pauseSong"
                 class="song-control-icon-pause">
-                  <use xlink:href="../src/svg/sprite.svg#icon-controller-paus"/>
+                  <use xlink:href="./src/svg/sprite.svg#icon-controller-paus"/>
                 </svg>
           
         </transition>
@@ -52,7 +52,7 @@
           <svg
           @click="setRepeatSong"
                 :class="[{'song-control-icon-repeat': true},{'song-repeat-on':songRepeat}]">
-                  <use xlink:href="../svg/sprite.svg#icon-cycle"/>
+                  <use xlink:href="src/svg/sprite.svg#icon-cycle"/>
             </svg>
       </div>
       
