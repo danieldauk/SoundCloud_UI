@@ -119,4 +119,10 @@ export default {
     width: 150px;
   }
 }
+@media (max-width: 500px) {
+  .search-input {
+    width: 100px;
+    font-size: 16px;
+  }
+}
 </style>

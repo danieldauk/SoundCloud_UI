@@ -53,8 +53,10 @@
               <use xlink:href="src/svg/sprite.svg#icon-cycle"/>
             </svg>
         </div>
+        <div class="player-time player-time-mobile ">
+           {{songTime}}
+          </div>
         <div class="track-name-container">
-
         <div class="player-track">
               <div 
               :style="{width:songPercentage}"
@@ -70,7 +72,9 @@
               
             </div>
             <div class="player-track-info">{{$store.state.currentSong}}</div>
+            <div class="player-track-info-mobile">{{$store.state.currentSong |cutTitle}}</div>
         </div>
+        
         <div class="time-volume-container">
           <div class="player-time">
            {{songTime}}
@@ -323,6 +327,15 @@ export default {
         );
     }
   },
+  filters: {
+    cutTitle(value){
+      if(value.length>50){
+        return value.split("").splice(0,50).join("") + "...";
+      } else {
+        return value;
+      }
+    }
+  },
   components: {
     RangeSlider
   }
@@ -368,11 +381,8 @@ $knob-shadow: 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 .player-track-info {
-  height: auto;
   font-size: 11px;
   color: $color-grey-light;
-  display: flex;
-  align-items: flex-end;
 }
 
 .player-track {
@@ -489,28 +499,86 @@ $knob-shadow: 1px 1px rgba(0, 0, 0, 0.2);
   transition: 0.2s;
 }
 
+.player-track-info-mobile{
+  font-size: 11px;
+  color: $color-grey-light;
+  display:none;
+}
+
+.player-time-mobile{
+    display:none;
+  }
+
 @media (max-width: 800px) {
   .player-container {
     background: $color-grey-dark;
     bottom: 0;
-    height: 120px;
+    height: 150px;
     grid-template-columns: auto;
     grid-row-gap: 5px;
-    grid-template-rows: 30px 50px 25px;
+    grid-template-rows: 60px 20px 50px;
   }
+
+
+.play-pause-container {
+  width: 50px;
+}
+
+.player-control-icon {
+  height: 25px;
+  width: 25px;
+  fill: $color-grey-light;
+  cursor: pointer;
+
+  &-play {
+    height: 50px;
+    width: 50px;
+    margin: 0;
+    fill: $color-green-light;
+  }
+  &-pause {
+    height: 44px;
+    width: 44px;
+    margin: 0;
+    fill: $color-green-light;
+  }
+  &-shuffle {
+    height: 20px;
+    width: 20px;
+  }
+}
+
+.player-track {
+  height:100%;
+  margin: 0 20px;
+  display:flex;
+  flex-direction: column;
+}
+
   .player-track-info{
+    display: none;
+  }
+
+  .player-track-info-mobile{
+    display: flex;
+    width:100%;
+    justify-content: center;
+    align-items:center;
+    margin-top: 5px;
   }
 
   .time-volume-container {
-    display: flex;
-    justify-content: space-around;
-  }
-
-  .player-time {
+    display: none;
   }
 
   .player-volume {
     margin: 0;
   }
+.player-time-mobile{
+    display: flex;
+    align-items:center;
+    justify-content: center;
+  }
+  
 }
 </style>

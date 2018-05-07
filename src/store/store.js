@@ -16,7 +16,7 @@ export const store = new Vuex.Store({
     currentPlaylist: {},
     repeatOn: true,
     repeatSong: false,
-    volume: 0.5,
+    volume: 1,
     currentQueryTerm: "",
     headerFetching: false
 

@@ -271,8 +271,8 @@ export default {
 
 @media (max-width: 800px) {
   .songs-container {
-  min-height: calc(100vh - 190px);
-  padding-bottom: 130px;
+  min-height: calc(100vh - 230px);
+  padding-bottom: 160px;
   }
 }
 
