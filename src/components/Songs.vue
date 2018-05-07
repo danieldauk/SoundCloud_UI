@@ -74,6 +74,7 @@ export default {
       this.contentShowed = value;
     },
     fetchingData(value) {
+      console.log("fetch");
       this.isFetching = value;
     },
     loadMore() {
