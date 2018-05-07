@@ -3,7 +3,7 @@
       <div class="soundcloud-logo-container">
           <svg
             class="soundcloud-logo">
-              <use xlink:href="../src/svg/sprite.svg#icon-soundcloud"/>
+              <use xlink:href="src/svg/sprite.svg#icon-soundcloud"/>
             </svg>
       </div>
       <div class="header-search">

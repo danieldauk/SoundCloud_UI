@@ -7,12 +7,12 @@
             <svg
             @click="shuffleSongs"
             class="player-control-icon player-control-icon-shuffle">
-              <use xlink:href="../src/svg/sprite.svg#icon-shuffle"/>
+              <use xlink:href="src/svg/sprite.svg#icon-shuffle"/>
             </svg>
             <svg
             @click="playNextPrev(-1)"
             class="player-control-icon player-control-icon-previous">
-              <use xlink:href="../src/svg/sprite.svg#icon-controller-jump-to-start"/>
+              <use xlink:href="src/svg/sprite.svg#icon-controller-jump-to-start"/>
             </svg>
           
             <div 
@@ -26,7 +26,7 @@
               key="play"
               @click="playSong"
             class="player-control-icon player-control-icon-play">
-              <use xlink:href="../src/svg/sprite.svg#icon-controller-play"/>
+              <use xlink:href="src/svg/sprite.svg#icon-controller-play"/>
             </svg>
 
 
@@ -35,7 +35,7 @@
             key="pause" 
             @click="pauseSong"
             class="player-control-icon player-control-icon-pause">
-              <use xlink:href="../src/svg/sprite.svg#icon-controller-paus"/>
+              <use xlink:href="src/svg/sprite.svg#icon-controller-paus"/>
             </svg>
             </transition>
             </div>
@@ -44,13 +44,13 @@
             <svg
             @click="playNextPrev(1)"
             class="player-control-icon player-control-icon-next">
-              <use xlink:href="../src/svg/sprite.svg#icon-controller-next"/>
+              <use xlink:href="src/svg/sprite.svg#icon-controller-next"/>
             </svg>
             <svg
             @click="setRepeat"
             :class="{activeRepeat: $store.state.repeatOn}"
             class="player-control-icon player-control-icon-repeat">
-              <use xlink:href="../src/svg/sprite.svg#icon-cycle"/>
+              <use xlink:href="src/svg/sprite.svg#icon-cycle"/>
             </svg>
         </div>
         <div class="track-name-container">

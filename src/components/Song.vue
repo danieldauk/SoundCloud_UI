@@ -31,7 +31,7 @@
                 :key="'play'+ track.id"
                 @click="playSong"
                 class="song-control-icon-play">
-                  <use xlink:href="/src/svg/sprite.svg#icon-controller-play"/>
+                  <use xlink:href="src/svg/sprite.svg#icon-controller-play"/>
                 </svg>
 
                 <svg 
@@ -39,7 +39,7 @@
                 v-if="!showButton"
                 @click="pauseSong"
                 class="song-control-icon-pause">
-                  <use xlink:href="./src/svg/sprite.svg#icon-controller-paus"/>
+                  <use xlink:href="src/svg/sprite.svg#icon-controller-paus"/>
                 </svg>
           
         </transition>
