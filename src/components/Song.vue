@@ -2,7 +2,7 @@
   <div class="song-container">
     <img 
     class="artwork-image"
-    :src="(track.artwork_url)?track.artwork_url.replace('large','t500x500') : 'https://dummyimage.com/500x500/1e1f1e/282828&text=No Image'">
+    :src="imageSource">
     <div 
     @click="setSongPosition"
     
@@ -68,6 +68,27 @@ import _ from "lodash";
 export default {
   props: ["track"],
   computed: {
+    imageSource() {
+      var media = window.matchMedia("(max-width:450px)").matches;
+      console.log(media);
+      if (this.track.artwork_url) {
+        if (media) {
+          //if small screen
+          return this.track.artwork_url;
+        } else {
+          //if large screen
+          return this.track.artwork_url.replace("large", "t500x500");
+        }
+      } else {
+        if (media) {
+          //if small screen
+          return "https://dummyimage.com/100x100/1e1f1e/282828&text=No Image";
+        } else {
+          //if large screen
+          return "https://dummyimage.com/500x500/1e1f1e/282828&text=No Image";
+        }
+      }
+    },
     songRepeat() {
       if (
         this.$store.state.currentSong == this.track.title &&
@@ -152,7 +173,8 @@ export default {
     },
     setSongPosition(event) {
       if (this.$store.state.currentSong === this.track.title) {
-        var myDiv = document.getElementsByClassName("waveform-container")[0].offsetWidth;
+        var myDiv = document.getElementsByClassName("waveform-container")[0]
+          .offsetWidth;
         var position = this.track.duration * (event.offsetX / myDiv);
         this.$store.state.player.seek(position);
         this.$store.dispatch("setCurrentSongTime", position);
@@ -362,78 +384,75 @@ export default {
   }
 
   .artwork-image {
-  height: 50px;
-  width: 50px;
-}
+    height: 50px;
+    width: 50px;
+  }
 
-.waveform-container {
-  width:250px;
-  position:absolute;
-  top:45px;
-  left:50px;
-}
+  .waveform-container {
+    width: 250px;
+    position: absolute;
+    top: 45px;
+    left: 50px;
+  }
 
-.waveform-container-fill-1 {
+  .waveform-container-fill-1 {
+    height: 5px;
+  }
 
-  height: 5px;
-}
+  .waveform-container-fill-2 {
+    background: $color-grey-dark;
+    width: 100%;
+    height: 5px;
+  }
+  .waveform {
+    display: none;
+  }
 
-.waveform-container-fill-2 {
-  background: $color-grey-dark;
-  width: 100%;
-  height: 5px;
-}
-.waveform {
-  display:none;
-}
+  .title-container {
+    padding-bottom: 5px;
+    box-sizing: border-box;
+    padding: 0 4px 0 4px;
+    margin: 0;
+    width: 100%;
+    border-right: 1px solid $color-grey-medium;
+  }
 
-.title-container{
-  padding-bottom: 5px;
-  box-sizing: border-box;
-  padding: 0 4px 0 4px;
-  margin:0;
-  width: 100%;
-  border-right: 1px solid $color-grey-medium;
-}
+  .title-container p {
+    text-align: left;
+    padding: 0;
+    margin: 0;
+    font-size: 13px;
+  }
 
-.title-container p{
-  text-align: left;
-  padding: 0;
-  margin: 0;
-  font-size: 13px;
-}
+  .song-menu-container {
+    grid-template-columns: auto auto;
+    width: 100%;
+    justify-content: space-around;
+  }
+  .song-time {
+    display: none;
+  }
+  .play-pause-song-container {
+    grid-column: 2 / 3;
+    width: 25px;
+    height: 25px;
+    margin: 0;
+  }
 
-.song-menu-container {
-  grid-template-columns: auto auto;
-  width: 100%;
-  justify-content: space-around;
-}
-.song-time{
-  display:none;
-}
-.play-pause-song-container{
-  grid-column: 2 / 3;
-  width:25px;
-  height:25px;
-  margin: 0;
-}
+  .song-control-icon-play {
+    height: 25px;
+    width: 25px;
+  }
 
-.song-control-icon-play {
-  height: 25px;
-  width: 25px;
+  .song-control-icon-pause {
+    height: 22px;
+    width: 22px;
+  }
 
-}
-
-.song-control-icon-pause {
-  height: 22px;
-  width: 22px;
-}
-
-.repeat-song-container{
-  grid-column:  1/ 2;
-  grid-row: 1 / 2;
-  margin:0;
-}
-
+  .repeat-song-container {
+    grid-column: 1/ 2;
+    grid-row: 1 / 2;
+    margin: 0;
+  }
 }
 </style>
