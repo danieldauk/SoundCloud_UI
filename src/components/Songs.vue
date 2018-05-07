@@ -287,7 +287,7 @@ export default {
 
 @media (max-width: 450px) {
   .transition-container {
-    grid-template-columns: 200px;
+    grid-template-columns: 300px;
   }
   .song-spinner {
     grid-column: 1/2;

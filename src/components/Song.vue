@@ -152,7 +152,7 @@ export default {
     },
     setSongPosition(event) {
       if (this.$store.state.currentSong === this.track.title) {
-        var myDiv = document.getElementsByClassName("waveform")[0].offsetWidth;
+        var myDiv = document.getElementsByClassName("waveform-container")[0].offsetWidth;
         var position = this.track.duration * (event.offsetX / myDiv);
         this.$store.state.player.seek(position);
         this.$store.dispatch("setCurrentSongTime", position);
@@ -218,9 +218,14 @@ export default {
         .map(_.capitalize)
         .join(" ");
     },
-    cutTitle(value){
-      if(value.length>50){
-        return value.split("").splice(0,50).join("") + "...";
+    cutTitle(value) {
+      if (value.length > 50) {
+        return (
+          value
+            .split("")
+            .splice(0, 50)
+            .join("") + "..."
+        );
       } else {
         return value;
       }
@@ -346,5 +351,89 @@ export default {
 
 .song-leave-active {
   opacity: 0;
+}
+
+@media (max-width: 450px) {
+  .song-container {
+    grid-template-columns: 50px 180px 70px;
+    align-items: center;
+    grid-template-rows: 50px;
+    grid-gap: 0;
+  }
+
+  .artwork-image {
+  height: 50px;
+  width: 50px;
+}
+
+.waveform-container {
+  width:250px;
+  position:absolute;
+  top:45px;
+  left:50px;
+}
+
+.waveform-container-fill-1 {
+
+  height: 5px;
+}
+
+.waveform-container-fill-2 {
+  background: $color-grey-dark;
+  width: 100%;
+  height: 5px;
+}
+.waveform {
+  display:none;
+}
+
+.title-container{
+  padding-bottom: 5px;
+  box-sizing: border-box;
+  padding: 0 4px 0 4px;
+  margin:0;
+  width: 100%;
+  border-right: 1px solid $color-grey-medium;
+}
+
+.title-container p{
+  text-align: left;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+}
+
+.song-menu-container {
+  grid-template-columns: auto auto;
+  width: 100%;
+  justify-content: space-around;
+}
+.song-time{
+  display:none;
+}
+.play-pause-song-container{
+  grid-column: 2 / 3;
+  width:25px;
+  height:25px;
+  margin: 0;
+}
+
+.song-control-icon-play {
+  height: 25px;
+  width: 25px;
+
+}
+
+.song-control-icon-pause {
+  height: 22px;
+  width: 22px;
+}
+
+.repeat-song-container{
+  grid-column:  1/ 2;
+  grid-row: 1 / 2;
+  margin:0;
+}
+
 }
 </style>
